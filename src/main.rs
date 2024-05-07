@@ -1,11 +1,13 @@
-#![allow(unused)]
+// #![allow(unused)]
 
 mod argc;
+mod error;
 
 use argc::argc_app;
-use clap::ArgMatches;
+use clap::{ArgMatches};
+use error::AppError;
 use file_size::fit_4;
-use std::{error::Error, fs, path::PathBuf};
+use std::{error::Error, path::PathBuf};
 use walkdir::WalkDir;
 
 const DIR: &str = "./";
@@ -21,20 +23,28 @@ struct Options {
 }
 
 impl Options {
-    fn from_argc(argc: ArgMatches) -> Options {
-        let nums: usize = argc
-            .value_of("number")
-            .map(|v| v.parse::<usize>().unwrap())
-            .unwrap_or(TOP_NUMS);
+    fn from_argc(argc: ArgMatches) -> Result<Options, AppError> {
+        let nums: usize = match argc.value_of("nums") {
+            None => TOP_NUMS,
+            Some(nums) => {
+                nums.parse::<usize>().or_else(|_| Err(AppError::InvalidNumberOfFiles(nums.to_string())))?
+            }
+        };
 
-        Options { nums }
+        Ok(Options { nums })
     }
 }
 
 fn main() {
     let argc = argc_app().get_matches();
 
-    let options = Options::from_argc(argc);
+    let options = match Options::from_argc(argc) {
+        Ok(options) => options,
+        Err(ex) => {
+            println!("ERROR parsing input {}", ex);
+            return; 
+        }
+    };
 
     match exec(options) {
         Ok(_) => (),
