@@ -1,5 +1,9 @@
 #![allow(unused)]
 
+mod argc;
+
+use argc::argc_app;
+use clap::ArgMatches;
 use file_size::fit_4;
 use std::{error::Error, fs, path::PathBuf};
 use walkdir::WalkDir;
@@ -12,8 +16,27 @@ struct Entry {
     size: u64,
 }
 
+struct Options {
+    nums: usize,
+}
+
+impl Options {
+    fn from_argc(argc: ArgMatches) -> Options {
+        let nums: usize = argc
+            .value_of("number")
+            .map(|v| v.parse::<usize>().unwrap())
+            .unwrap_or(TOP_NUMS);
+
+        Options { nums }
+    }
+}
+
 fn main() {
-    match exec() {
+    let argc = argc_app().get_matches();
+
+    let options = Options::from_argc(argc);
+
+    match exec(options) {
         Ok(_) => (),
         Err(ex) => {
             println!("ERROR - {}", ex);
@@ -21,10 +44,10 @@ fn main() {
     }
 }
 
-fn exec() -> Result<(), Box<dyn Error>> {
+fn exec(options: Options) -> Result<(), Box<dyn Error>> {
     let mut total_size: u64 = 0;
     let mut total_numbers: u32 = 0;
-    let mut tops: Vec<Entry> = Vec::with_capacity(TOP_NUMS + 1);
+    let mut tops: Vec<Entry> = Vec::with_capacity(options.nums + 1);
     let mut min_of_tops = 0;
 
     for entry in WalkDir::new(DIR).into_iter().filter_map(|e| e.ok()) {
@@ -41,7 +64,7 @@ fn exec() -> Result<(), Box<dyn Error>> {
                 });
 
                 tops.sort_by(|a, b| b.size.cmp(&a.size));
-                if tops.len() > TOP_NUMS {
+                if tops.len() > options.nums {
                     tops.pop();
                 }
                 min_of_tops = tops.last().map(|e| e.size).unwrap_or(0);
