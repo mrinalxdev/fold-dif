@@ -1,12 +1,29 @@
 [package]
-name = "fold-dif"
-version = "0.1.0"
+categories = ["command-line-interface"]
+description = "Simple command line to get directory information"
 edition = "2021"
+homepage = "https://github.com/mrinalxdev/fold-dif"
+include = [
+  "src/**/*",
+  "Cargo.toml",
+  "README.md",
+  "LICENSE",
+]
+keywords = [
+  "cli",
+  "directory",
+  "command line",
+  "directory size",
+]
+name = "fold-dif"
+repository = "https://github.com/mrinalxdev/fold-dif"
+version = "0.1.0"
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 clap = "2"
+file-size = "1"
 thiserror = "1"
 walkdir = "2"
-file-size = "1"

@@ -4,10 +4,10 @@ mod argc;
 mod error;
 
 use argc::argc_app;
-use clap::{App, ArgMatches};
+use clap::{ArgMatches};
 use error::AppError;
 use file_size::fit_4;
-use std::{error::Error, fs, path::PathBuf};
+use std::{error::Error, path::PathBuf};
 use walkdir::WalkDir;
 
 const DIR: &str = "./";
