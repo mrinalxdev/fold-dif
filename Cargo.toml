@@ -12,8 +12,6 @@ include = [
 keywords = [
   "cli",
   "directory",
-  "command line",
-  "directory size",
 ]
 name = "fold-dif"
 repository = "https://github.com/mrinalxdev/fold-dif"
